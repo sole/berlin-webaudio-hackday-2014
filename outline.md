@@ -170,6 +170,36 @@ setTimeout(restart, 1000);
 
 TODO: review this for PROPERNESS--because how do you set the frequency values and etc if you can't access the node? and remapping all the node methods can be tedious, which we don't want.
 
+### Can we play some other thing other than that beep?
+
+TODO: change type first and frequency later so the audioparam is introduced
+
+Of course we can! Every node has different properties that we can change programmatically. they are not just plain JavaScript object properties; they are [AudioParam](http://webaudio.github.io/web-audio-api/#the-audioparam-interface)s, which means that they are accessed slightly differently. For example suppose we want to change the frequency the oscillator is playing at. Instead of doing this:
+
+```javascript
+osc.frequency = 123;
+```
+
+you need to use the `.value` property of the `frequency` AudioParam:
+
+```javascript
+osc.frequency.value = 123;
+```
+
+We could also change the type of wave the oscillator will generate, with the `type` property:
+
+```javascript
+osc.type = 'square';
+```
+
+Note how `type` is not an AudioParam, but a simple attribute, so we simply change its value straight away. Possible types:
+
+- `sine` (the default)
+- `square`
+- `sawtooth`
+- `triangle`
+- and `custom` (but I won't enter into that now)
+
 ## Gotchas
 
 - Older implementations use prefixed constructor, older node names and constants we don't use anymore. But we have Chris Wilson's monkey patch library (TODO) and this article on how to write audio code that works in every browser
@@ -196,9 +226,9 @@ TODO fill in missing links
 	- API specification
 	- Mailing list
 	- Users mailing list
-- The Web Audio book
+- The [Web Audio API book](http://chimera.labs.oreilly.com/books/1234000001552/index.html) by Boris Smus
 - Talks:
-	- Chris Wilson: [Turning the web up to 11](https://www.youtube.com/watch?v=hFsCG7v9Y4c) @ Google I/O 2012 - [deck](http://webaudio-io2012.appspot.com/)
+	- Chris Wilson: [Turning the web up to 11](https://www.youtube.com/watch?v=hFsCG7v9Y4c) @ Google I/O 2012 - [deck](http://webaudio-io2012.appspot.com/) - many method names have changed since then, a lot happens in two years!
 	- Chris Wilson: [Making the web rock](https://www.youtube.com/watch?v=wZrNI-86zYI) @ HTMLDevConf 2013 - [deck](http://webaudiodemos.appspot.com/slides/)
 	- Stuart Memo: [Javascript is the new punk rock]() @ JSConf.EU 2012 - [deck]()
 	- Paul Adenot: @ BCN Hackday 2014 - [deck]()
