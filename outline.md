@@ -174,6 +174,33 @@ TODO: review this for PROPERNESS--because how do you set the frequency values an
 
 TODO: change type first and frequency later so the audioparam is introduced
 
+Of course we can! Every node has different properties that we can change programmatically. For example, we could change the type of wave the oscillator will generate, with the `type` property:
+
+```javascript
+osc.type = 'square';
+```
+Possible types:
+
+- `sine` (the default)
+- `square`
+- `sawtooth`
+- `triangle`
+- and `custom` (but I won't enter into that now)
+
+But suppose we want to change the frequency the oscillator is playing at. Instead of doing this:
+
+```javascript
+osc.frequency = 123;
+```
+
+you need to do this:
+
+```javascript
+osc.frequency.value = 123;
+```
+
+There is a reason for this distinction, but I won't get into that now (if you want, you can read more about it )
+
 Of course we can! Every node has different properties that we can change programmatically. they are not just plain JavaScript object properties; they are [AudioParam](http://webaudio.github.io/web-audio-api/#the-audioparam-interface)s, which means that they are accessed slightly differently. For example suppose we want to change the frequency the oscillator is playing at. Instead of doing this:
 
 ```javascript
