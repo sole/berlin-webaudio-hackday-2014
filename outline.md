@@ -197,7 +197,53 @@ But that doesn't have any effect. That's because `frequency` is an special sort 
 osc.frequency.value = 123;
 ```
 
-There is a reason for this distinction, but I won't get into that now (if you want, you can read more about it in the AudioParam section of the spec).
+## More about AudioParams
+
+### Schedule changes with accurate timing
+
+do not use setTimeout or setInterval! different audio thread, different timing from UI. Glitches, crackling and buffering.
+
+Gotcha: setvalue at time needs start position, not just using `value`
+
+### Modulating properties
+
+Connecting the output of one node to another node's property - so you can build complex sounds by composing them in this manner! this is the "modular" aspect of WebAudio
+
+LFO example modulating frequency.
+
+### Cancelling scheduled events
+
+[`cancelScheduledValues(startTime)`](http://webaudio.github.io/web-audio-api/#widl-AudioParam-cancelScheduledValues-void-double-startTime)
+
+## Playing existing samples
+
+short sounds: AudioBuffer, AudioBufferSourceNode, have to load first with xmlhttprequest or generate the array buffer with floats, can schedule playing with precision too
+
+these are like oscillators: they die when stopped so a similar solution has to be implemented
+
+longer sounds: MediaElementAudioSourceNode TODO
+example connecting <audio> and example with getUserMedia
+
+## Analysing the sound
+
+AnalyserNode
+
+prepare the arraybuffer where results will be dumped into
+
+gotchas: what was actually returned? depending on if you use getFloatFrequencyData or getByteFrequencyData
+
+(important to put this BEFORE the next section so we can visualise the modified output graphically)
+
+## Altering the sound: 3D and FX time!
+
+Other node types and what can we do with them? gain, delay, filter, panning, reverb
+
+very useful for games because you can just USE those instead of writing the DSP code yourself! plus optimised and give a more realistic touch. Experimenting with 3D sound is also a new thing!
+
+Quick examples -> gain, delay, filter, panning, reverb is a little bit more involved because it requires to load an impulse response file which describes how a given environment shapes the sound, so you can apply that "response" to any input
+
+And of course the parameters for these nodes can be modulated using the output from other nodes.
+
 
 ## Gotchas
 
