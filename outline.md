@@ -172,9 +172,7 @@ TODO: review this for PROPERNESS--because how do you set the frequency values an
 
 ### Can we play some other thing other than that beep?
 
-TODO: change type first and frequency later so the audioparam is introduced
-
-Of course we can! Every node has different properties that we can change programmatically. For example, we could change the type of wave the oscillator will generate, with the `type` property:
+Of course we can! Every node has different properties that we can change programmatically. For example, we could change the type of wave the oscillator will generate, using the `type` property:
 
 ```javascript
 osc.type = 'square';
@@ -187,45 +185,19 @@ Possible types:
 - `triangle`
 - and `custom` (but I won't enter into that now)
 
-But suppose we want to change the frequency the oscillator is playing at. Instead of doing this:
+Now suppose we want to change the frequency the oscillator is playing at, which would make it play a different note. Our first instinct would be to do this, right?
 
 ```javascript
 osc.frequency = 123;
 ```
 
-you need to do this:
+But that doesn't have any effect. That's because `frequency` is an special sort of property: its type is [AudioParam](http://webaudio.github.io/web-audio-api/#the-audioparam-interface), and what that means is that you access the `value` like this:
 
 ```javascript
 osc.frequency.value = 123;
 ```
 
-There is a reason for this distinction, but I won't get into that now (if you want, you can read more about it )
-
-Of course we can! Every node has different properties that we can change programmatically. they are not just plain JavaScript object properties; they are [AudioParam](http://webaudio.github.io/web-audio-api/#the-audioparam-interface)s, which means that they are accessed slightly differently. For example suppose we want to change the frequency the oscillator is playing at. Instead of doing this:
-
-```javascript
-osc.frequency = 123;
-```
-
-you need to use the `.value` property of the `frequency` AudioParam:
-
-```javascript
-osc.frequency.value = 123;
-```
-
-We could also change the type of wave the oscillator will generate, with the `type` property:
-
-```javascript
-osc.type = 'square';
-```
-
-Note how `type` is not an AudioParam, but a simple attribute, so we simply change its value straight away. Possible types:
-
-- `sine` (the default)
-- `square`
-- `sawtooth`
-- `triangle`
-- and `custom` (but I won't enter into that now)
+There is a reason for this distinction, but I won't get into that now (if you want, you can read more about it in the AudioParam section of the spec).
 
 ## Gotchas
 
