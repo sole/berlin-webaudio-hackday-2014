@@ -205,15 +205,63 @@ You are probably wondering: "what is the point of having AudioParams instead of 
 
 The first most interesting feature is that you can very precisely schedule changes to AudioParams.
 
-For example, imagine we wanted to change an oscillator's frequency from 440 to 880 in 10 seconds. A naive approach would be to set an interval and continuously change the value until we reach the final one. But this is probably going to sound like "stepped", because the maximum precision that you can reach with `setInterval` or `setTimeout` is usually about 100ms, so that means you can change the frequency only every 0.1 seconds instead of continuously. Our ears are very good at detecting pitch changes, so that "stepped" sound would sound very different to what you actually intended.
+For example, imagine we wanted to change an oscillator's frequency from 440 to 880 in 10 seconds. A naive approach would be to set an interval and continuously change the value until we reach the final one. But this is probably going to sound like "stepped", because the maximum precision that you can reach with `setInterval` or `setTimeout` is usually about 100ms, so that means you can change the frequency only every 0.1 seconds instead of continuously. Our ears are very good at detecting subtle pitch changes, so that "stepped" sound would sound very different to what you actually intended.
 
 Example: stepped_sounds.
 
-So how do we solve this?
+So how do we solve this with Web Audio? Well, AudioParams have a set of very useful methods we can use for this purpose, called *automation methods*:
 
-do not use setTimeout or setInterval! different audio thread, different timing from UI. Glitches, crackling and buffering.
 
-Gotcha: setvalue at time needs start position, not just using `value`
+- setValueAtTime() - SetValue
+- linearRampToValueAtTime() - LinearRampToValue
+- exponentialRampToValueAtTime() - ExponentialRampToValue
+- setTargetAtTime() - SetTarget
+- setValueCurveAtTime() - SetValueCurve
+
+Internally the API keeps a list of timed events per AudioParam, and uses it to determine what should be the value for that parameter at any given moment. So for going linearly from 440 to 880, we should do this:
+
+```javascript
+osc.frequency.setValueAtTime(440, 0);
+osc.frequency.linearRampToValueAtTime(880, audioContext.currentTime + 3);
+```
+
+And the engine will make sure that the value changes continuously without "hiccups" or unexpected steps.
+
+#### Envelopes
+
+You can use these functions to build more complex value changes--in music terms these are popularly called *envelopes*. A popular type of envelope that is used often in substractive synthesis is the [ADSR envelope](TODO link)
+
+(TODO picture)
+
+To implement it with Web Audio you would first:
+
+```javascript
+osc.frequency.setValueAtTime(initialValue, 0);
+osc.frequency.linearRampToValueAtTime(maxValue, audioContext.currentTime + attackLength);
+osc.frequency.linearRampToValueAtTime(sustainValue, audioContext.currentTime + decayLength);
+```
+
+and hold it there in the `sustainValue` until the envelope is *released* (maybe the user releases the key). Then:
+
+```javascript
+osc.frequency.linearRampToValueAtTime(minValue, audioContext.currentTime + releaseLength);
+```
+TODO Example: Envelope example.
+
+*Gotcha:* parameter automation requires you to specify the starting value using `setValueAtTime` with a value of `0` for the time, instead of just using `value` because the engine interpolates between values in the event list, and setting `value` values doesn't add events into the list!
+
+Don't do like me and implement this calculating the values manually in JS and using `setInterval` and `setTimeout`--you will miss events and things will sound weird!
+
+
+### Cancelling scheduled events
+
+Suppose we decide to totally stop whatever we are playing, but we've scheduled events in the future already. We can clear the list of events with [`cancelScheduledValues(startTime)`](http://webaudio.github.io/web-audio-api/#widl-AudioParam-cancelScheduledValues-void-double-startTime). For example:
+
+```javascript
+osc.frequency.cancelScheduledValues(audioContext.currentTime);
+```
+
+cancels all events scheduled after `currentTime`.
 
 ### Modulating properties
 
@@ -221,9 +269,9 @@ Connecting the output of one node to another node's property - so you can build 
 
 LFO example modulating frequency.
 
-### Cancelling scheduled events
+## Intermission: the audio thread vs the UI thread
 
-[`cancelScheduledValues(startTime)`](http://webaudio.github.io/web-audio-api/#widl-AudioParam-cancelScheduledValues-void-double-startTime)
+// ...
 
 ## Playing existing samples
 
@@ -258,8 +306,8 @@ And of course the parameters for these nodes can be modulated using the output f
 ## Gotchas
 
 - Older implementations use prefixed constructor, older node names and constants we don't use anymore. But we have Chris Wilson's monkey patch library (TODO) and this article on how to write audio code that works in every browser
-- For performance reasons (TODO investigate & look for the exact details) some Nodes are one use only-need to recreate them everytime you call `stop` on them
-- setValue at time won't interpolate if you haven't set an initial value for the ramp using another set* function already
+- xmentioned For performance reasons (TODO investigate & look for the exact details) some Nodes are one use only-need to recreate them everytime you call `stop` on them
+- xmentioned setValue at time won't interpolate if you haven't set an initial value for the ramp using another set* function already
 - trying to use buffers before they're actually loaded
 - In Chrome you can't new too many AudioContexts. ScriptNodes can be starved by holding up event loop for too long. https://twitter.com/ntt/status/505357514645311489
 - The mapping from simpler LR pan (like on a mixer) parameter to the PannerNode x,y,z is kinda messy. http://stackoverflow.com/questions/14378305/how-to-create-very-basic-left-right-equal-power-panning-with-createpanner/14412601#14412601 https://twitter.com/ntt/status/505358246773665792
