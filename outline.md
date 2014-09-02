@@ -199,7 +199,17 @@ osc.frequency.value = 123;
 
 ## More about AudioParams
 
-### Schedule changes with accurate timing
+You are probably wondering: "what is the point of having AudioParams instead of just simple attributes?" Well, you can access some powerful features that would not be available otherwise (or wouldn't perform as nicely).
+
+### Scheduling changes with accurate timing
+
+The first most interesting feature is that you can very precisely schedule changes to AudioParams.
+
+For example, imagine we wanted to change an oscillator's frequency from 440 to 880 in 10 seconds. A naive approach would be to set an interval and continuously change the value until we reach the final one. But this is probably going to sound like "stepped", because the maximum precision that you can reach with `setInterval` or `setTimeout` is usually about 100ms, so that means you can change the frequency only every 0.1 seconds instead of continuously. Our ears are very good at detecting pitch changes, so that "stepped" sound would sound very different to what you actually intended.
+
+Example: stepped_sounds.
+
+So how do we solve this?
 
 do not use setTimeout or setInterval! different audio thread, different timing from UI. Glitches, crackling and buffering.
 
