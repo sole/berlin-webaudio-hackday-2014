@@ -255,6 +255,16 @@ And of course the parameters for these nodes can be modulated using the output f
 - The mapping from simpler LR pan (like on a mixer) parameter to the PannerNode x,y,z is kinda messy. http://stackoverflow.com/questions/14378305/how-to-create-very-basic-left-right-equal-power-panning-with-createpanner/14412601#14412601 https://twitter.com/ntt/status/505358246773665792
 - you can only have one audio context so why the need for a constructor? https://twitter.com/JoshMock/status/505370597187395585 - NOT REALLY http://lists.w3.org/Archives/Public/public-audio/2014JulSep/0153.html
 
+## Being mobile friendly
+
+Detect if you're on mobile, probably reduce the number of nodes you're using or the processing type. For example:
+- in a game you would want to play less sounds simultaneously
+- or if using `PannerNode`, the `HRTF` panning model is more accurate but also more computationally expensive. You can probably get away with just using `equalpower`
+- shorten release times if you can afford it - so the node ends playing a little bit earlier. Less atmospheric but might be marginally more efficient?
+- use smaller audio assets (e.g. instead of 44KHz OGG files use just 22KHz) so they're faster to decode. Most people in mobile are just using crappy earphones and probably won't notice if the sound is a little bit worse, but the experience will be faster and smoother.
+- detect when your app goes to the background and stop processing further events
+
+
 ## Advanced Web Audio techniques
 
 Topics for Web Audio Hackday 202 or just to get you excited in case you weren't not excited enough already
@@ -277,7 +287,11 @@ TODO fill in missing links
 	- Chris Wilson: [Making the web rock](https://www.youtube.com/watch?v=wZrNI-86zYI) @ HTMLDevConf 2013 - [deck](http://webaudiodemos.appspot.com/slides/)
 	- Stuart Memo: [Javascript is the new punk rock]() @ JSConf.EU 2012 - [deck]()
 	- Paul Adenot: @ BCN Hackday 2014 - [deck]()
+	- Paul Adenot: [Web Audio API at FOSDEM 2014](http://ftp.osuosl.org/pub/fosdem//2014/UD2218A/Saturday/Web_Audio_API.webm)
 	- Jordan Santell: @ JSConf.us 2014 - [deck]()
 	- Soledad Penades: [Audio for the masses]() @ LXJS 2014 - [deck]()
 	- Soledad Penades: [Web Audio + Web Components = Audio tags]() @ Cascadia JS 2013 - [deck]()
 	- Soledad Penades: [Four to the floor JavaScript]() @ JSConf.EU 2013 - [deck]()
+- Articles and newsletters
+	- Chris Wilson: [A tale of two clocks - Scheduling Web Audio with precision](http://www.html5rocks.com/en/tutorials/audio/scheduling/) - how to accurately schedule events in Web Audio
+	- Chris Lowis' [Web Audio Weekly](http://blog.chrislowis.co.uk/waw.html) newsletter
