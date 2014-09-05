@@ -1,8 +1,10 @@
 (function() {
 	var graphs_list = [
-		[ [ 'Linear.None', TWEEN.Easing.Linear.None ] ],
-		[ [ 'Stepped, 10', tenStepsEasing ] ],
-		[ [ 'Stepped, 20', getNStepsEasing(20) ] ]
+		[
+			[ 'Linear', TWEEN.Easing.Linear.None ], 
+			[ '10 steps', tenStepsEasing ],
+			[ '20 steps', getNStepsEasing(20) ]
+		]
 	],
 	graphs = [],
 	graphsToInit = [],

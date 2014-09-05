@@ -1,90 +1,101 @@
 *, *:before, *:after {
-	box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 * {
-	padding: 0;
-	margin: 0;
+  padding: 0;
+  margin: 0;
 }
 
 
 body {
-	background: #fff;
-	font-family: Helvetica, Arial, sans;
-	margin: 2.5em 5em;
+  background: #fff;
+  font-family: Helvetica, Arial, sans;
 }
 
 
 h1, h2, h3, h4, h5, h6 {
-	font-weight: normal;
+  font-weight: normal;
 }
 
 h1 {
-	font-size: 3em;
-	color: #333;
-	letter-spacing: -0.05em;
+  font-size: 3em;
+  color: #333;
+  letter-spacing: -0.05em;
 }
 
 p {
-	font-size: 2em;
-	color: #aaa;
+  font-size: 2em;
+  color: #aaa;
 }
 
 a {
-	color: #008;
+  color: #008;
 }
 
 #container {
-	margin: 3em 0;
+  display: flex;
 }
-	#container div {
-		margin: 1em 0;
-	}
 
 div {
-	-webkit-transition-duration: 1.5s;
-	-moz-transition-duration: 1.5s;
+  -webkit-transition-duration: 1.5s;
+  -moz-transition-duration: 1.5s;
 }
 
 canvas {
-	box-shadow: 0px 0px 10px rgba(255, 255, 255, 0);
-	margin: 0.5em 0;
-	-webkit-transition-duration: 0.3s;
-	-moz-transition-duration: 0.3s;
+  box-shadow: 0px 0px 10px rgba(255, 255, 255, 0);
+  margin: 0.5em 0;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+}
+
+
+.graph {
+  display: inline-flex;
+  flex-direction: column;
+  position: relative;
+  margin-right: 1rem;
 }
 
 .disabled {
-	opacity: 0.1;
+  opacity: 0.1;
 }
 
 .ready {
-	color: #008;
-	text-decoration: underline;
-	opacity: 1;
-	cursor: pointer;
-	position: relative;
+  color: #008;
+  text-decoration: underline;
+  opacity: 1;
+  cursor: pointer;
+  position: relative;
 }
-	.ready:hover canvas {
-		box-shadow: 0px 0px 10px #faa;
-	}
-	
-	.play {
-		position: absolute;
-		top: 40px;
-		left: 70px;
-		padding: 10px;
-		border: 3px solid #999;
-		border-radius: 30px;
-		height: 10px;
-		width: 10px;
-		line-height: 0.5;
-		color: #999;
-		opacity: 0.7;
-		-webkit-transition-duration: 0.3s;
-		-moz-transition-duration: 0.3s;
-	}
-		.ready:hover .play {
-			color: #080;
-			border-color: #080;
-		}
-	
+.ready:hover canvas {
+  box-shadow: 0px 0px 10px #faa;
+}
+
+.play {
+  position: absolute;
+  top: 40%;
+  text-align: center;
+  width: 100%;
+  color: #999;
+  opacity: 0.7;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+}
+
+.play div {
+  display: inline-block;
+  border-radius: 3rem;
+  padding: 0.2rem;
+  text-align: center;
+  width: 30%;
+  font-size: 200%;
+  vertical-align: text-bottom;
+  line-height: 100%;
+}
+
+.ready:hover .play {
+  color: #080;
+  border-color: #080;
+}
+

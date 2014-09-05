@@ -1,5 +1,7 @@
 function Graph(title, easing) {
 
+  'use strict';
+
 	var div,
 		canvas, context,
 		playDiv,
@@ -14,10 +16,7 @@ function Graph(title, easing) {
 	EventTarget.call( this );
 
 	div = document.createElement( 'div' );
-	div.style.display = 'inline-block';
-	div.style.width = '200px';
-	div.style.height = '120px';
-	div.className = 'disabled';
+	div.className = 'disabled graph';
 
 	canvas = document.createElement( 'canvas' );
 	canvas.width = 180;
@@ -29,7 +28,7 @@ function Graph(title, easing) {
 	div.appendChild( canvas );
 
 	playDiv = document.createElement( 'div' );
-	playDiv.appendChild( document.createTextNode( '▶' ) );
+  playDiv.innerHTML = '<div>▶</div>';
 	playDiv.className = 'play';
 
 	audio = document.createElement( 'audio' );
@@ -147,12 +146,10 @@ function Graph(title, easing) {
 		var lastValue = buffer[ buffer.length - 1 ];
 
 		var threshold = 0.15, extra = 0;
-		//if(Math.abs(lastValue) > threshold) {
 		var numExtra = buffer.length / sampleFadeOutDivider;
 		for(var i = 0; i < numExtra; i++) {
 			buffer[ buffer.length - 1 - i ] *= i / numExtra;
 		}
-		//}
 
 		audioSource = document.createElement( 'source' );
 		audioSource.type = 'audio/wav';
@@ -160,9 +157,14 @@ function Graph(title, easing) {
 
 		audioSource.src = getWaveData(buffer, sampleRate);
 
+    audio.addEventListener('canplaythrough', function() {
+      console.log('YA', audio);
+    });
+
 		sampleBuilt = true;
 
-		div.className = 'ready';
+		div.classList.remove('disabled');
+    div.classList.add('ready');
 		div.appendChild(playDiv);
 
 		resetCanvas();
