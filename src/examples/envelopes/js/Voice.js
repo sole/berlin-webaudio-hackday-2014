@@ -32,8 +32,8 @@ function Voice(context) {
 
   this.noteOff = function(when) {
     nodeNeedsNulling = true;
-    gainNode.gain.linearRampToValueAtTime(0, when + this.decay);
-    node.stop(when + this.decay);
+    gainNode.gain.linearRampToValueAtTime(0, when + this.release);
+    node.stop(when + this.release);
   };
 
   this.output = gainNode;

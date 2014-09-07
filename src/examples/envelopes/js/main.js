@@ -6,6 +6,8 @@ window.addEventListener('load', function() {
 
   var playing = false;
 
+  ['attack', 'decay', 'sustain', 'release'].forEach(setADSRListener);
+
   window.addEventListener('keydown', onKeyDown);
   window.addEventListener('keyup', onKeyUp);
 
@@ -38,6 +40,15 @@ window.addEventListener('load', function() {
     playing = false;
     console.log('note off');
     voice.noteOff(context.currentTime);
+  }
+
+  function setADSRListener(parameter) {
+    var input = document.getElementById(parameter);
+    input.step = 0.1;
+    input.value = voice[parameter];
+    input.addEventListener('input', function() {
+      voice[parameter] = this.value * 1.0;
+    });
   }
 
 });
