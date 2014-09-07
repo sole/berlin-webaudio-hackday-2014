@@ -97,7 +97,7 @@ oscillator.start(0);
 oscillator.start(audioContext.currentTime + 3);
 ```
 
-Basically, any time you pass a value which is less than `currentTime`, it will be run immediately, or as immediately as the buffering allows *more on this later TODO.
+Basically, any time you pass a value which is less than `currentTime`, it will be run immediately, or as immediately as the buffering allows--I'll speak more about buffers later.
 
 Likewise, we can stop the oscillator either 'now' or some time from now:
 
@@ -205,12 +205,11 @@ You are probably wondering: "what is the point of having AudioParams instead of 
 
 The first most interesting feature is that you can very precisely schedule changes to AudioParams.
 
-For example, imagine we wanted to change an oscillator's frequency from 440 to 880 in 10 seconds. A naive approach would be to set an interval and continuously change the value until we reach the final one. But this is probably going to sound like "stepped", because the maximum precision that you can reach with `setInterval` or `setTimeout` is usually about 100ms, so that means you can change the frequency only every 0.1 seconds instead of continuously. Our ears are very good at detecting subtle pitch changes, so that "stepped" sound would sound very different to what you actually intended.
+For example, imagine we wanted to change an oscillator's frequency from 440 to 880 in 10 seconds. A naive approach would be to set an interval and continuously change the value until we reach the final one. But this is probably going to sound like "stepped", because the maximum precision that you can reach with `setInterval` or `setTimeout` is [limited](http://www.adequatelygood.com/Minimum-Timer-Intervals-in-JavaScript.html), so that means you can change the frequency only every `x` seconds instead of continuously. Or even worse: browsers usually throttle code running in background tabs, so it might be executed only once a second. Our ears are very good at detecting non continuous subtle pitch changes, so that "stepped" sound would sound very different to what you actually intended. Specially if you just can update audio frequencies once a second!
 
 Example: stepped_sounds.
 
 So how do we solve this with Web Audio? Well, AudioParams have a set of very useful methods we can use for this purpose, called *automation methods*:
-
 
 - setValueAtTime() - SetValue
 - linearRampToValueAtTime() - LinearRampToValue
@@ -221,22 +220,26 @@ So how do we solve this with Web Audio? Well, AudioParams have a set of very use
 Internally the API keeps a list of timed events per AudioParam, and uses it to determine what should be the value for that parameter at any given moment. So for going linearly from 440 to 880, we should do this:
 
 ```javascript
-osc.frequency.setValueAtTime(440, 0);
+osc.frequency.setValueAtTime(440, audioContext.currentTime);
 osc.frequency.linearRampToValueAtTime(880, audioContext.currentTime + 3);
 ```
 
 And the engine will make sure that the value changes continuously without "hiccups" or unexpected steps.
 
+*Gotcha:* parameter automation requires you to specify the starting value using `setValueAtTime` with a value of `currentTime` for the time instead of just using `value`, because the engine interpolates between values in the event list, and setting `value` values doesn't add events into the list!
+
+*Gotcha*: make sure you use `audioContext.currentTime` instead of `0` for the initial values. Setting them to `0` will work only once (I'm guessing it's some implementation detail because the list is ordered).
+
 #### Envelopes
 
-You can use these functions to build more complex value changes--in music terms these are popularly called *envelopes*. A popular type of envelope that is used often in substractive synthesis is the [ADSR envelope](TODO link)
+You can use these functions to build more complex value changes--in music terms these are popularly called *envelopes*. A popular type of envelope that is used often in substractive synthesis is the [ADSR envelope](http://en.wikipedia.org/wiki/Synthesizer#ADSR_envelope).
 
 (TODO picture)
 
 To implement it with Web Audio you would first:
 
 ```javascript
-osc.frequency.setValueAtTime(initialValue, 0);
+osc.frequency.setValueAtTime(initialValue, audioContext.currentTime);
 osc.frequency.linearRampToValueAtTime(maxValue, audioContext.currentTime + attackLength);
 osc.frequency.linearRampToValueAtTime(sustainValue, audioContext.currentTime + decayLength);
 ```
@@ -248,9 +251,7 @@ osc.frequency.linearRampToValueAtTime(minValue, audioContext.currentTime + relea
 ```
 TODO Example: Envelope example.
 
-*Gotcha:* parameter automation requires you to specify the starting value using `setValueAtTime` with a value of `0` for the time, instead of just using `value` because the engine interpolates between values in the event list, and setting `value` values doesn't add events into the list!
-
-Don't do like me and implement this calculating the values manually in JS and using `setInterval` and `setTimeout`--you will miss events and things will sound weird!
+Don't do like me and implement this by calculating the values manually in JS and using `setInterval` and `setTimeout`--you will miss events and things will sound weird, and get worse the more events and the faster they are supposed to happen!
 
 
 ### Cancelling scheduled events
@@ -269,7 +270,7 @@ Connecting the output of one node to another node's property - so you can build 
 
 LFO example modulating frequency.
 
-## Intermission: the audio thread vs the UI thread
+## Intermission: the audio thread vs the UI thread: two parallel lives
 
 // ...
 
