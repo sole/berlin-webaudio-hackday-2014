@@ -414,11 +414,19 @@ We can also generate the buffer programmatically by writing float values to an `
 
 ### MediaElementAudioSourceNode
 
-longer sounds: MediaElementAudioSourceNode 
+For longer sounds (e.g. longer than a minute) it is recommended to use the `MediaElementAudioSourceNode`. Those take an `<audio>` or `<video>` element and incorporate their output into the audio graph, so you can manipulate them as if they were any other sort of module!
 
-TODO example
+```javascript
+var video = document.querySelector('video');
+var audioSourceNode = context.createMediaElementAudioSource(video);
+audioSourceNode.connect(context.destination);
+```
 
-TODO example connecting <audio> and example with getUserMedia
+Example: mediaelement
+
+Scheduling with these is a little bit less predictable as they have to be streamed, buffered, decoded, etc... but in return you don't use all your memory to hold a decoded mp3 ready to be played, so that's a good trade-off!
+
+Tip: you can also use `getUserMedia` to get live microphone input! Here's [an example](https://github.com/sole/lxjs2014/blob/master/src/examples/03_realtimevis/main.js#L93-L102) - basically you use the returned stream from `getUserMedia` and use it in place of any video or audio element when creating an instance of MediaElementSource..
 
 ## Analysing the sound
 
