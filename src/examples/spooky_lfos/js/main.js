@@ -7,7 +7,7 @@ window.addEventListener('load', function() {
   var osc = context.createOscillator();
 
   // Nodes for the LFO itself
-  var lfoOsc = context.createOscillator();
+  var lfOsc = context.createOscillator();
   var gain = context.createGain();
 
   // Connect the oscillator to the context destination as usual
@@ -15,14 +15,14 @@ window.addEventListener('load', function() {
 
   // Multiply the output of lfoOsc to make it go from [-1, 1] to [-gain, gain]
   // by connecting it to the gain node:
-  lfoOsc.connect(gain);
+  lfOsc.connect(gain);
 
   // Now use the multiplied output to modulate the frequency of the first oscillator:
   gain.connect(osc.frequency);
   gain.gain.value = 0;
 
   osc.frequency.value = 880;
-  lfoOsc.frequency.value = 1;
+  lfOsc.frequency.value = 1;
 
   var playing = false;
   var playingMessage = 'No more SPOOKY';
@@ -49,7 +49,7 @@ window.addEventListener('load', function() {
       startButton.innerHTML = 'SPOOKINESS is over';
     } else {
       osc.start();
-      lfoOsc.start();
+      lfOsc.start();
       playing = true;
       startButton.innerHTML = playingMessage;
     }
@@ -57,7 +57,7 @@ window.addEventListener('load', function() {
 
   function onRateChange(ev) {
     var value = rateSlider.value * 1.0;
-    lfoOsc.frequency.value = value;
+    lfOsc.frequency.value = value;
   }
 
   function onDepthChange(ev) {

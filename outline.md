@@ -284,9 +284,55 @@ I already used this function in the previous example!
 
 ### Modulating properties
 
-We can also connect the output of one node to another node's property - so you can build complex sounds by composing them in this manner! This is probably the best example of why Web Audio being modular is so cool.
+We can also connect the output of one node to another node's property--so you can build complex sounds by composing them in this manner! This is probably the best example of why Web Audio being modular is so cool. For example, let's suppose we want to build another common component of substractive synthesis: an LFO.
 
-TODO LFO example modulating frequency.
+#### LFOs
+
+TODO picture
+
+LFOs stand for *Low Frequency Oscillators*, and they are often used for modulating other parameters' values. They are, in essence, just another oscillator, but instead of running at frequencies that humans can hear (roughly: above 20Hz), they run at lower frequencies. We can't hear them--but they can alter sound that is running in a frequency we can hear, and so those subtle changes we can definitely hear, as we saw in the stepped sounds example before!
+
+Let's make some spooky sounds out of a 50's horror movie!
+
+We first create a context and an oscillator, and connect the oscillator to the context's destination, as usual-nothing different so far.
+
+```javascript
+var context = new AudioContext();
+var osc = context.createOscillator();
+```
+
+But now we'll set up some more nodes to simulate the circuitry of an LFO component. First we create the low frequency oscillator.
+
+```javascript
+var lfOsc = context.createOscillator();
+```
+
+It's just like the other oscillator! No surprises here.
+
+Oscillators only output values between -1 and 1. But modulating a frequency by only these values is maybe too small to be appreciated, so we need to find a way to multiply these values. We can use a GainNode! Remember when I said it also was a multiplier? If we connect the output of the low frequency oscillator to a gain node where the values are bigger than 1 we'll be able to widen the output range of this oscillator:
+
+```javascript
+var gain = context.createGain();
+lfOsc.connect(gain); // the output from gain is the [-1, 1] range
+gain.gain.value = 100; // now the output from gain is in the [-100, 100] range!
+```
+
+The difference here is that we won't connect this output to the `destination`--but to the `frequency` parameter of the first oscillator:
+
+```javascript
+gain.connect(osc.frequency);
+```
+
+And before we get the thing started, we'll make sure the oscillators are configured with the proper frequencies to generate the right effect:
+
+```javascript
+osc.frequency.value = 440;
+lfOsc.frequency.value = 1; // oscillation frequency is 1Hz = once per second
+osc.start();
+lfOsc.start();
+```
+
+Example: spooky lfos.
 
 ## Intermission: the audio thread vs the UI thread: two parallel lives
 
