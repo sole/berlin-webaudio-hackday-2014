@@ -34,7 +34,7 @@ window.addEventListener('load', function() {
 
   var rateSlider = document.getElementById('rate');
   rateSlider.addEventListener('input', onRateChange);
-  rateSlider.value = lfoOsc.frequency.value;
+  rateSlider.value = lfOsc.frequency.value;
 
   var depthSlider = document.getElementById('depth');
   depthSlider.addEventListener('input', onDepthChange);
