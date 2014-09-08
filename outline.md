@@ -122,7 +122,7 @@ So the answer to "why" is "for performance reasons".
 
 Some types of nodes are meant to be short lived and one-use only. Once you call `stop` on them, they will be disposed of by the garbage collector at some point (as long as you free all other references to them in your code--watch out for memory leaks otherwise!).
 
-One option is to create some kind of wrapping class that invisibly takes care of this for you. You could get more sophisticated, but imagine something like this:
+One solution is to create some kind of wrapping class that invisibly takes care of this for you. You could get more sophisticated, but imagine something like this:
 
 ```javascript
 function Oscillator(context) {
@@ -226,9 +226,9 @@ osc.frequency.linearRampToValueAtTime(880, audioContext.currentTime + 3);
 
 And the engine will make sure that the value changes continuously without "hiccups" or unexpected steps.
 
-*Gotcha:* parameter automation requires you to specify the starting value using `setValueAtTime` with a value of `currentTime` for the time instead of just using `value`, because the engine interpolates between values in the event list, and setting `value` values doesn't add events into the list!
+*Gotcha 1:* parameter automation requires you to specify the starting value using `setValueAtTime` with a value of `currentTime` for the time instead of just using `value`, because the engine interpolates between values in the event list, and setting `value` values doesn't add events into the list!
 
-*Gotcha*: make sure you use `audioContext.currentTime` instead of `0` for the initial values. Setting them to `0` will work only once (I'm guessing it's some implementation detail because the list is ordered).
+*Gotcha 2:* make sure you use `audioContext.currentTime` instead of `0` for the initial values. Setting them to `0` will work only once (I'm guessing it's some implementation detail, because the list is ordered).
 
 #### Envelopes
 
@@ -236,23 +236,39 @@ You can use these functions to build more complex value changes--in music terms 
 
 (TODO picture)
 
-To implement it with Web Audio you would first:
+It is quite typically used to describe the volume of notes, as it is relatively easy to configure and compute.
+
+To implement it with Web Audio you would first create an instance of a new type of node: `GainNode`. This will let us control the output volume of whatever has been connected to its input:
 
 ```javascript
-osc.frequency.setValueAtTime(initialValue, audioContext.currentTime);
-osc.frequency.linearRampToValueAtTime(maxValue, audioContext.currentTime + attackLength);
-osc.frequency.linearRampToValueAtTime(sustainValue, audioContext.currentTime + decayLength);
+var ctx = new AudioContext();
+var osc = ctx.createOscillator();
+var gain = ctx.createGain(); // *** NEW
+
+osc.connect(gain); // *** NEW
+gain.connect(ctx.destination); // *** NEW
 ```
 
-and hold it there in the `sustainValue` until the envelope is *released* (maybe the user releases the key). Then:
+As you can see we connected the oscillator to the gain node and the gain node to the destination--and now we can either mute or super amplify the oscillator by changing the gain's `gain` value. The first stage is to describe the "attack-decay-sustain" phase, which will be started when a note is "on" (typically when you press a keyboard key, or when you strum a string):
 
 ```javascript
-osc.frequency.linearRampToValueAtTime(minValue, audioContext.currentTime + releaseLength);
+// Attack/decay/sustain
+gain.gain.setValueAtTime(0, audioContext.currentTime);
+gain.gain.linearRampToValueAtTime(1, audioContext.currentTime + attackLength);
+gain.gain.linearRampToValueAtTime(sustainValue, audioContext.currentTime + decayLength);
 ```
-TODO Example: Envelope example.
 
-Don't do like me and implement this by calculating the values manually in JS and using `setInterval` and `setTimeout`--you will miss events and things will sound weird, and get worse the more events and the faster they are supposed to happen!
+and hold it there in the `sustainValue` until the envelope is *released* (when the user releases the key, or the piano pedal-in a guitar you can't really sustain the note for long). Then the second stage is implementing the "release" phase, which is just a fade out:
 
+```javascript
+gain.gain.linearRampToValueAtTime(0, audioContext.currentTime + releaseLength);
+```
+
+Don't do like me and [implement this](https://github.com/sole/sorollet.js/blob/master/src/core/ADSR.js) by calculating the values manually in JS and using `setInterval` and `setTimeout`--you will miss events and things will sound weird, and get worse the more events and the faster they are supposed to happen!
+
+Each instrument has its own typical volume envelope, and you can get many interesting effects by playing with these values.
+
+Example: envelopes example. Using both scheduling and clearing scheduled values.
 
 ### Cancelling scheduled events
 
@@ -264,11 +280,13 @@ osc.frequency.cancelScheduledValues(audioContext.currentTime);
 
 cancels all events scheduled after `currentTime`.
 
+I already used this function in the previous example!
+
 ### Modulating properties
 
-Connecting the output of one node to another node's property - so you can build complex sounds by composing them in this manner! this is the "modular" aspect of WebAudio
+We can also connect the output of one node to another node's property - so you can build complex sounds by composing them in this manner! This is probably the best example of why Web Audio being modular is so cool.
 
-LFO example modulating frequency.
+TODO LFO example modulating frequency.
 
 ## Intermission: the audio thread vs the UI thread: two parallel lives
 
@@ -280,8 +298,14 @@ short sounds: AudioBuffer, AudioBufferSourceNode, have to load first with xmlhtt
 
 these are like oscillators: they die when stopped so a similar solution has to be implemented
 
-longer sounds: MediaElementAudioSourceNode TODO
-example connecting <audio> and example with getUserMedia
+TODO pew pew example
+
+
+longer sounds: MediaElementAudioSourceNode 
+
+TODO example
+
+TODO example connecting <audio> and example with getUserMedia
 
 ## Analysing the sound
 
@@ -292,6 +316,8 @@ prepare the arraybuffer where results will be dumped into
 gotchas: what was actually returned? depending on if you use getFloatFrequencyData or getByteFrequencyData
 
 (important to put this BEFORE the next section so we can visualise the modified output graphically)
+
+TODO example
 
 ## Altering the sound: 3D and FX time!
 
