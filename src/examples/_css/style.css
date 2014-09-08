@@ -15,3 +15,8 @@ body {
 button {
   font-size: inherit;
 }
+
+small {
+  font-size: 50%;
+  font-style: italic;
+}
