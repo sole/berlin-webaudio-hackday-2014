@@ -19,9 +19,9 @@ window.addEventListener('load', function() {
 
   // Now use the multiplied output to modulate the frequency of the first oscillator:
   gain.connect(osc.frequency);
-  gain.gain.value = 10;
+  gain.gain.value = 0;
 
-  osc.frequency.value = 220;
+  osc.frequency.value = 880;
   lfoOsc.frequency.value = 1;
 
   var playing = false;
@@ -32,8 +32,14 @@ window.addEventListener('load', function() {
   startButton.addEventListener('click', toggle);
   startButton.removeAttribute('disabled');
 
-  var slider = document.querySelector('input');
-  slider.addEventListener('input', onSliderChange);
+  var rateSlider = document.getElementById('rate');
+  rateSlider.addEventListener('input', onRateChange);
+  rateSlider.value = lfoOsc.frequency.value;
+
+  var depthSlider = document.getElementById('depth');
+  depthSlider.addEventListener('input', onDepthChange);
+  depthSlider.value = gain.gain.value;
+
 
   function toggle() {
     if(playing) {
@@ -49,9 +55,16 @@ window.addEventListener('load', function() {
     }
   }
 
-  function onSliderChange(ev) {
-    var value = slider.value * 1.0;
+  function onRateChange(ev) {
+    var value = rateSlider.value * 1.0;
     lfoOsc.frequency.value = value;
+  }
+
+  function onDepthChange(ev) {
+    var value = depthSlider.value * 1.0;
+    // we don't want to send the oscillator to play on negative frequencies
+    // so we'll just modulate using the current osc frequency as multiplier and not a hardcoded value
+    gain.gain.value = value * osc.frequency.value;
   }
 
 });
