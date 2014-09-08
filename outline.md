@@ -337,15 +337,82 @@ Example: spooky lfos.
 ## Intermission: the audio thread vs the UI thread: two parallel lives
 
 // ...
+TODO: why did I want to explain this here?
 
 ## Playing existing samples
 
-short sounds: AudioBuffer, AudioBufferSourceNode, have to load first with xmlhttprequest or generate the array buffer with floats, can schedule playing with precision too
+While it's great to synthesise things from scratch, sometimes it's just easier to load an existing sample. There are two approaches to this with Web Audio, depending on how long the sample is. If it's a short sample, you should use `AudioBufferSourceNode`s as they keep the entire decoded data in memory, ready to be played. For example: bullet sounds in games. For longer samples you should use the `MediaElementAudioSourceNode`, which allows you to stream the contents of the sample as they are needed for playing.
 
-these are like oscillators: they die when stopped so a similar solution has to be implemented
+### AudioBuffer + AudioBufferSourceNode
 
-TODO pew pew example
+Suppose we want to build a *pewpewmatic*. It just fires a *pew* sample each time we press space! 
 
+Let's start by creating an audio context as usual, but this time, instead of creating an `OscillatorNode` we'll create an `AudioBufferSourceNode`:
+
+```javascript
+var context = new AudioContext();
+var pewSource = context.createBufferSource();
+```
+
+Now we need to get the sample data from somewhere--we need to load a file that the browser can decode (OGG, MP3, WAV). Web Audio doesn't get any esoteric here; you just use a normal XMLHttpRequest to load the file:
+
+```javascript
+var request = new XMLHttpRequest();
+request.open('GET', samplePath, true);
+```
+
+... but with some 'peculiarities'. We want to get access to the binary data, 'as is', so we'll be asking for the response in an ArrayBuffer:
+
+```javascript
+request.responseType = 'arraybuffer'; // we want binary data 'as is'
+```
+
+And once it is loaded and we have the binary data, there's still one more step left: decoding it!
+
+```javascript
+request.onload = function() {
+	context.decodeAudioData(request.response, loadedCallback, errorCallback);
+};
+```
+
+The success callback will get the already decoded `BufferSource`, ready to use. The error callback gets a `DOMException`, but for this particular example we'll just ignore it:
+
+```javascript
+function loadedCallback(bufferSource) {
+	buffer = bufferSource;
+}
+
+function errorCallback() {
+	alert('No PEW PEW for you');
+}
+```
+
+Assuming we loaded the file and decoded the buffer, we can create the `AudioBufferSourceNode` now and assign it the newly decoded buffer:
+
+```javascript
+var abs = context.createBufferSource();
+abs.buffer = buffer;
+
+```
+
+We're ready to play this! And good news, the interface for starting and stopping buffer sources is exactly the same as with oscillators:
+
+```javascript
+abs.start(when);
+abs.stop(when);
+```
+
+so you can schedule buffer sources with precision too.
+
+But the similarities don't stop here--once a buffer source has played through the entirety of the buffer, or once you stop it, you can't call start on it again. Or well, you can, but it doesn't have any effect. You have to create another instance of buffer source, but the good news is that you don't need to reload the buffer data gain, since it's already loaded and decoded: you just need to assign it as the `buffer` property of the new `AudioBufferSourceNode`.
+
+Taking this into account, here's the pewpewmatic:
+
+example: pewpewmatic
+
+We can also generate the buffer programmatically by writing float values to an `ArrayBuffer`. For example you could generate noise samples instead of downloading them--so you save on bandwidth and storage. You can ask me about this if you're interested, but [here's an example](https://github.com/sole/supergear/blob/master/src/NoiseGenerator.js) anyway.
+
+### MediaElementAudioSourceNode
 
 longer sounds: MediaElementAudioSourceNode 
 
@@ -367,7 +434,7 @@ TODO example
 
 ## Altering the sound: 3D and FX time!
 
-Other node types and what can we do with them? gain, delay, filter, panning, reverb
+Other node types and what can we do with them? delay, filter, panning, reverb
 
 very useful for games because you can just USE those instead of writing the DSP code yourself! plus optimised and give a more realistic touch. Experimenting with 3D sound is also a new thing!
 
