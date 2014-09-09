@@ -8,7 +8,7 @@ window.addEventListener('load', function() {
   var lfGain = context.createGain();
   var mediaElement = context.createMediaElementSource(video);
   var analyser = context.createAnalyser();
-  analyser.fftSize = 256;
+  analyser.fftSize = 512;
   var analyserTimeData = new Float32Array(analyser.frequencyBinCount);
   var analyserFreqData = new Float32Array(analyser.frequencyBinCount);
 

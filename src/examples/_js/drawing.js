@@ -35,7 +35,7 @@ function drawFrequencySample(canvas, bufferData, sampleRate) {
   var halfHeight = height * 0.5;
   var bufferLength = bufferData.length;
   var canvasContext = canvas.getContext('2d');
-  var numBars = 32;
+  var numBars = 8;
   var nyquist = sampleRate * 0.5;
   var minFrequency = 20;
   var maxFrequency = 11000;
@@ -49,6 +49,10 @@ function drawFrequencySample(canvas, bufferData, sampleRate) {
   var x = 0;
   var barPos = 0;
   
+  canvasContext.save();
+  canvasContext.translate(0, height);
+  canvasContext.scale(1, -1);
+
   canvasContext.fillStyle = 'yellow';
   
   for(var i = 0; i < numBars; i++) {
@@ -56,14 +60,15 @@ function drawFrequencySample(canvas, bufferData, sampleRate) {
 
     canvasContext.beginPath();
     
-    // canvasContext.rect(x, height + v * height, sliceWidth, halfHeight); // x, y, width, height
-    canvasContext.rect(x, height - 10, sliceWidth, - v * height - halfHeight); // x, y, width, height
+    canvasContext.rect(x, 0, sliceWidth, -v * height); // x, y, width, height
     
     canvasContext.fill();
 
     x += sliceWidth;
     frequency += frequencySliceWidth;
   }
+
+  canvasContext.restore();
 }
 
 function getFrequencyValue(frequency, nyquist, frequenciesBuffer) {
