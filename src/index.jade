@@ -426,18 +426,158 @@ html
 
 
       section
+        h1.bullet Playing existing samples
+        ul
+          li <tt>AudioBufferSourceNode</tt> for short samples (&lt; 1 min)
+          li <tt>MediaElementAudioSourceNode</tt> for longer sounds
+
+
+      section
+        h3.bullet <tt>AudioBufferSourceNode</tt>, 1
+        code.language-javascript.bullet
+          pre.
+            //
+            var context = new AudioContext();
+            var pewSource = context.createBufferSource();
+            var request = new XMLHttpRequest();
+            request.open('GET', samplePath, true);
+            request.responseType = 'arraybuffer'; // we want binary data 'as is'
+            request.onload = function() {
+              context.decodeAudioData(request.response, loadedCallback, errorCallback);
+            };
+
+
+      section
+        h3.bullet <tt>AudioBufferSourceNode</tt>, 2
+        code.language-javascript.bullet
+          pre.
+            //
+            function loadedCallback(bufferSource) {
+              buffer = bufferSource;
+            }
+
+            function errorCallback() {
+              alert('No PEW PEW for you');
+            }
+
+            var abs = context.createBufferSource();
+            abs.buffer = buffer;
+
+      section
+        h3.bullet <tt>AudioBufferSourceNode</tt>, 3
+        p.bullet Just like oscillators!
+        code.language-javascript.bullet
+          pre.
+            //
+            abs.start(when);
+            abs.stop(when);
+
+        p.bullet Even the <tt>AudioBufferSourceNode</tt> dies like oscillators!
+
+      section
+        h2 Pssst:
+        h3.bullet You can create them again and reuse the <tt>buffer</tt>
+
+      
+      section
         h1 pewpewmatic
         iframe(src='examples/pewpewmatic')
 
+      section
+        h3.bullet <tt>MediaElementAudioSourceNode</tt>
+        p.bullet Take the output of &lt;audio&gt; or &lt;video&gt; and incorporate them into the graph
+        code.language-javascript.bullet
+          pre.
+            //
+            var video = document.querySelector('video');
+            var audioSourceNode = context.createMediaElementAudioSource(
+              video
+            );
+            audioSourceNode.connect(context.destination);
+
 
       section
-        h1 media element
+        h1 Media element
         iframe(src='examples/mediaelement')
+        p <em>Better open the iframe in a new tab...</em>
 
 
       section
-        h1 analyser
+        h2.bullet What about analysing sounds?
+        h1.bullet <tt>AnalyserNode</tt>
+
+      section
+        h2 <tt>AnalyserNode</tt>, 1
+        code.language-javascript.bullet
+          pre.
+            //
+            var analyser = context.createAnalyser();
+            analyser.fftSize = 2048;
+            var analyserData = new Float32Array(
+              analyser.frequencyBinCount
+            );
+
+            gain.connect(analyser);
+
+
+      section
+        h2 <tt>AnalyserNode</tt>, 2
+        code.language-javascript.bullet
+          pre.
+            //
+            requestAnimationFrame(animate);
+
+            function animate() {
+              analyser.getFloatTimeDomainData(analyserData);
+              drawSample(canvas, analyserData);
+            }
+
+
+      section
+        h1 Analyser
         iframe(src='examples/analyser')
+
+
+      section
+        h1.bullet Further altering sounds
+        h2.bullet Standard Web Audio nodes you can use
+        ul
+          li delay
+          li filter (low/pass/high frequencies)
+          li panning (3D sounds!)
+          li reverb (via convolver)
+          li splitter
+          li waveshaper
+          li compressor
+        p.bullet Their parameters can also be modulated and automated!
+
+
+      section
+        h1 A brief pause for self reflection...
+
+
+      section
+        h1.bullet Being mobile friendly
+        ul
+          li in games, play less sounds simultaneously
+          li if using PannerNode, use a panning model that is less computationally expensive
+          li shorten release times so nodes end playing a bit before
+          li use smaller audio assets (e.g. 2KHz instead of 44KHz)
+          li detect when your app goes to the background and stop processing
+
+      section
+        h1.bullet Web Audio Workshop 202?
+        h2.bullet Or just in case you got excited!
+        ul
+          li Using getUserMedia + MediaElementAudioSourceNode
+          li Web Audio Workers - generate audio in realtime with JavaScript
+          li OfflineAudioContext - render as fast as possible!
+          li ???
+          li go crazy!
+
+
+      section
+        h1 QUESTIONS?
 
 
       section(data-bespoke-state='title')
