@@ -371,7 +371,55 @@ html
         h3.bullet Connect the output of one node to another node's property
 
 
+      section
+        h1 LFOs
+        h2.bullet <em>Low Frequency Oscillators</em>
+        img(src='./examples/_data/lfo.png', class='bullet')
 
+
+      section
+        h1 LFOs
+        h2.bullet We can't hear those frequencies...
+        h3.bullet but can use them to alter other values we <em>can</em> notice!
+
+      section
+        h1 SPOOKY SOUNDS
+
+
+      section
+        h2.bullet Watch out!
+
+        code.language-javascript.bullet
+          pre.
+            //
+            var context = new AudioContext();
+            var osc = context.createOscillator();
+            var lfOsc = context.createOscillator();
+
+            var gain = context.createGain();
+            lfOsc.connect(gain);
+            
+            // The output from gain is the [-1, 1] range
+            gain.gain.value = 100;
+            // now the output from gain is in the [-100, 100] range!
+            
+            gain.connect(osc.frequency); // NOT the destination
+
+
+      section
+        h2.bullet KEEP watching out
+
+        code.language-javascript.bullet
+          pre.
+            //
+            osc.frequency.value = 440;
+
+            // oscillation frequency is 1Hz = once per second
+            lfOsc.frequency.value = 1;
+            
+            osc.start();
+            lfOsc.start();
+                       
       section
         h1 spooky LFOs
         iframe(src='examples/spooky_lfos')
