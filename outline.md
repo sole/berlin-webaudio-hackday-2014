@@ -430,21 +430,42 @@ Tip: you can also use `getUserMedia` to get live microphone input! Here's [an ex
 
 ## Analysing the sound
 
-AnalyserNode
+Web Audio also provides with functionality to help you analyse what is going on. The node type for this is called, not very surprisingly, AnalyserNode. It mostly works like other nodes, in which we create an instance and connect something to it--but it doesn't generate or transform sound. It simply... analyses it. The results of this analysis will be dumped into an array buffer, and then we can do whatever we want with them.
 
-prepare the arraybuffer where results will be dumped into
+For example, let's suppose we want to analyse the output of the video in the previous example. We create the analyser and configure it:
+
+```javascript
+var analyser = context.createAnalyser();
+analyser.fftSize = 2048;
+var analyserData = new Float32Array(analyser.frequencyBinCount);
+```
+
+`analyserData` is the `ArrayBuffer` where results will be dumped into each time we ask the analyser node for fresh data. This is done in the `animate` function, each time we need to update the screen:
+
+```javascript
+analyser.getFloatTimeDomainData(analyserData);
+drawSample(canvas, analyserData);
+```
+
+We also need to *connect* some input to the analyser node, so that it has *something* to analyse:
+
+```javascript
+gain.connect(analyser);
+```
+
+You don't need to connect the analyser to anything if you don't want to. It will just return the same input signal, which is useful if you're chaining several things together.
+
+I'll spare you the details of how to draw the sample--it's just canvas drawing methods that I abstracted into a function.
+
+### Byte or Float?
 
 gotchas: what was actually returned? depending on if you use getFloatFrequencyData or getByteFrequencyData
 
-(important to put this BEFORE the next section so we can visualise the modified output graphically)
-
-TODO example
 
 ## Altering the sound: 3D and FX time!
 
-Other node types and what can we do with them? delay, filter, panning, reverb
+There are still more nodes that come with built-in functionality for us: delay, filter, panning, reverb... They are very useful for games because you can just USE those instead of writing the DSP code yourself! Plus they are native code which means they should be more efficient. Using these will allow you to give your audio code a more realistic touch. And also, they make experimenting with 3D sound really easy!
 
-very useful for games because you can just USE those instead of writing the DSP code yourself! plus optimised and give a more realistic touch. Experimenting with 3D sound is also a new thing!
 
 Quick examples -> gain, delay, filter, panning, reverb is a little bit more involved because it requires to load an impulse response file which describes how a given environment shapes the sound, so you can apply that "response" to any input
 

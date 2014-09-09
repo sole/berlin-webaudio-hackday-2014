@@ -22,7 +22,190 @@ html
 
 
       section
-        h1 regenerating
+        h3.bullet Why are we here?
+        h2.bullet Because we want to make noise in the web
+        h1.bullet ... without plug-ins!
+
+
+      section
+        h1 Oh, I know, with <tt>&lt;audio&gt;</tt>, eh?
+
+
+      section
+        h2 We <em>could</em> use it...
+        tt.bullet &lt;audio src="awesomesong.ogg" controls preload&gt;&lt/audio&gt;
+        h3.bullet This would...
+        ul
+          li initiate network request for loading
+          li deal with decoding/streaming/buffering
+          li render audio controls
+          li display progress indicator, time...
+
+      section
+        h3.bullet It could also trigger some events!
+        ul
+          li loaded
+        h3.bullet And has methods you can use
+        ul
+          li play
+
+      section
+        h2.bullet But it has shortcomings...
+        ul
+          li hard to accurately schedule
+          li triggering multiple instances of same sound requires a hack
+          li they're associated to a DOM element
+          li output goes straight to the speakers - no fancy visualisations
+          li in some systems the OS will display a fullscreen player overlay
+
+      section
+        h3.bullet Is it all over?
+        h2.bullet Do we just give up and start writing native apps?
+        h1.bullet NO
+
+
+      section
+        h2.bullet ... or maybe we could use Flash...?
+        h1.bullet Get out of here.
+        h3.bullet Have a nice day!
+
+
+      section
+        h1 Web Audio to the rescue!
+
+
+      section
+        h3.bullet Web Audio...
+        ul
+          li is modular
+          li interoperable with other JS/Web APIs
+          li not attached to the DOM
+          li runs in a separate thread
+          li 2014: supported in many browsers!
+
+      section
+        h2.bullet So how does it work?
+        h1.bullet Let me tell you a story...
+
+
+      section
+        h1.bullet In the beginning there was the nothingness...
+
+      
+      section
+        h2.bullet And we created an audio context
+        code.language-javascript.bullet
+          pre.
+            var audioContext = new AudioContext();
+
+      section
+        h2.bullet The audio graph? <span class="bullet">ô_Ô</span>
+
+      section
+        h1 Show, don't tell
+
+
+      section
+        h2.bullet Let's make some noise
+        code.language-javascript.bullet
+          pre.
+            //
+            var audioContext = new AudioContext();
+            var oscillator = audioContext.createOscillator();
+            oscillator.connect(audioContext.destination);
+
+      section
+        h2.bullet Controlling the oscillator
+        code.language-javascript.bullet
+          pre.
+            // start it now
+            oscillator.start(0);
+
+            // 3 seconds from now
+            oscillator.start(audioContext.currentTime + 3)
+
+            // stop it now
+            oscillator.stop(0);
+            
+            // start it again
+            oscillator.start(0); // But nothing happens!?
+            
+
+      section
+        h3.bullet Why can't oscillators be restarted?
+        h2.bullet Welcome to your first Web Audio...
+        h1.bullet GOTCHA!
+
+
+      section
+        h2.bullet Because of performance reasons
+        h3.bullet One-use only nodes
+        ul.bullet
+            li shoot and forget
+            li automatically disposed of by the GC
+            li as long as you don't keep references
+            li watch out for those memory leaks!
+
+      section
+        h1 Write your own wrappers
+
+
+      section
+        h2.bullet Oscillator.js (1/2)
+        code.language-javascript
+          pre.
+            function Oscillator(context) {
+              var node = null;
+              var nodeNeedsNulling = false;
+
+              function ensureNodeIsLive() {
+                if(nodeNeedsNulling || node === null) {
+                  node = context.createOscillator();
+                }
+                nodeNeedsNulling = false;
+              }
+
+              // ... continued
+
+
+      section
+        h2.bullet Oscillator.js (2/2)
+        code.language-javascript
+          pre.
+            // continues
+              this.start = function(when) {
+                ensureNodeIsLive();
+                node.start(when);
+              };
+
+              this.stop = function(when) {
+                if(node === null) {
+                  return;
+                }
+                nodeNeedsNulling = true;
+                node.stop(when);
+              };
+            }
+
+
+      section
+        h2.bullet Using it
+        code.language-javascript
+            pre.
+              var ctx = new AudioContext();
+              var osc = new Oscillator(ctx);
+
+              function restart() {
+                osc.stop(0);
+                osc.start(0);
+              }
+
+              osc.start(0);
+
+              setTimeout(restart, 1000);
+
+      section
+        h2 Self regenerating oscillator
         iframe(src='examples/regenerate_oscillator')
 
 
