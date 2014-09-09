@@ -210,13 +210,166 @@ html
 
 
       section
-        h1 stepped sounds
+        h2 Can we play something other than that beep?
+        h3 Yes!
+
+
+      section
+        h3.bullet Nodes have properties we can change
+        h2.bullet e.g. <tt>oscillator.type</tt>
+        ul
+          li sine
+          li square
+          li sawtooth
+          li triangle
+          li custom
+
+        code.language-javascript.bullet
+          pre.
+            oscillator.type = 'square';
+
+
+      section
+        h3.bullet <tt>oscillator.frequency</tt>
+        h2.bullet Naive attempt:
+        code.language-javascript.bullet
+          pre.
+             oscillator.frequency = '880';
+
+      section
+        h3.bullet <tt>oscillator.frequency</tt> is an <tt>AudioParam</tt>
+        h2.bullet It is <em>special</em>
+        code.language-javascript.bullet
+          pre.
+            // Access it with
+            oscillator.frequency.value = '880';
+
+
+      section
+        h2.bullet So what is the point of <tt>AudioParam</tt>?
+        h1.bullet Superpowers.
+
+      section
+        h1.bullet Superpower #1
+        h2.bullet Scheduling changes with accurate timing
+
+      section
+        h1.bullet What NOT to do
+        ul
+          li setInterval
+          li setTimeout
+
+      section
+        h1 Stepped sounds
         iframe(src='examples/step_sounds')
 
 
       section
-        h1 envelopes
+        h2.bullet <tt>AudioParam</tt> approach
+        ul
+          li <tt>setValueAtTime</tt>
+          li <tt>linearRampToValueAtTime</tt>
+          li <tt>exponentialRampToValueAtTime</tt>
+          li <tt>setTargetAtTime</tt>
+          li <tt>setValueCurveAtTime</tt>
+        h3.bullet Web Audio keeps a list of timed events <strong>per parameter</strong>
+
+      section
+        h3.bullet Go from 440 to 880 Hz in 3 seconds
+        code.language-javascript.bullet
+          pre.
+            osc.frequency.setValueAtTime(
+              440,
+              audioContext.currentTime
+            );
+            osc.frequency.linearRampToValueAtTime(
+              880,
+              audioContext.currentTime + 3
+            );
+
+      section
+        h2.bullet Building envelopes
+        h3.bullet Let's build an ADSR envelope
+        img(src='./examples/_data/adsr.png', class='bullet')
+
+
+      section
+        h1.bullet ADSRs...?
+        ul
+          li Used a lot in substractive synthesis
+          li Often for describing note volumes
+          li Relatively easy to configure and compute
+
+
+      section
+        h2.bullet We need a new node for controlling the volume
+        h1.bullet <tt>GainNode</tt>
+
+
+        code.language-javascript.bullet
+          pre.
+            var ctx = new AudioContext();
+            var osc = ctx.createOscillator();
+            var gain = ctx.createGain(); // *** NEW
+
+            osc.connect(gain); // *** NEW
+            gain.connect(ctx.destination); // *** NEW
+
+
+      section
+        h2 ADSR part 1
+        h3.bullet Attack/Decay/Sustain phase
+
+        code.language-javascript.bullet
+          pre.
+            //
+            gain.gain.setValueAtTime(
+              0,
+              audioContext.currentTime
+            );
+            gain.gain.linearRampToValueAtTime(
+              1,
+              audioContext.currentTime + attackLength
+            );
+            gain.gain.linearRampToValueAtTime(
+              sustainValue,
+              audioContext.currentTime + decayLength
+            );
+
+      section
+        h2 ADSR part 2
+        h3.bullet Release phase
+
+        code.language-javascript.bullet
+          pre.
+            //
+            gain.gain.linearRampToValueAtTime(
+              0,
+              audioContext.currentTime + releaseLength
+            );
+
+
+      section
+        h1 Envelopes
         iframe(src='examples/envelopes')
+
+
+      section
+        h2 Cancelling events!
+
+        code.language-javascript.bullet
+          pre.
+            //
+            osc.frequency.cancelScheduledEvents(
+              audioContext.currentTime
+            );
+
+
+      section
+        h1.bullet Superpower #2
+        h2.bullet Modulating properties
+        h3.bullet Connect the output of one node to another node's property
+
 
 
       section
