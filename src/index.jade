@@ -44,10 +44,15 @@ html
       section
         h3.bullet It could also trigger some events!
         ul
-          li loaded
+          li loadeddata
+          li error
+          li ended
+          li ... etc
         h3.bullet And has methods you can use
         ul
+          li load
           li play
+          li pause
 
       section
         h2.bullet But it has shortcomings...
@@ -94,12 +99,14 @@ html
       
       section
         h2.bullet And we created an audio context
-        code.language-javascript.bullet
-          pre.
+        pre.bullet
+          code.language-javascript.
             var audioContext = new AudioContext();
+
 
       section
         h2.bullet The audio graph? <span class="bullet">ô_Ô</span>
+
 
       section
         h1 Show, don't tell
@@ -107,17 +114,17 @@ html
 
       section
         h2.bullet Let's make some noise
-        code.language-javascript.bullet
-          pre.
-            //
+        pre
+          code.language-javascript.
             var audioContext = new AudioContext();
             var oscillator = audioContext.createOscillator();
             oscillator.connect(audioContext.destination);
 
+
       section
         h2.bullet Controlling the oscillator
-        code.language-javascript.bullet
-          pre.
+        pre
+          code.language-javascript.
             // start it now
             oscillator.start(0);
 
@@ -140,7 +147,7 @@ html
       section
         h2.bullet Because of performance reasons
         h3.bullet One-use only nodes
-        ul.bullet
+        ul
             li shoot and forget
             li automatically disposed of by the GC
             li as long as you don't keep references
@@ -152,8 +159,8 @@ html
 
       section
         h2.bullet Oscillator.js (1/2)
-        code.language-javascript
-          pre.
+        pre
+          code.language-javascript.
             function Oscillator(context) {
               var node = null;
               var nodeNeedsNulling = false;
@@ -170,8 +177,8 @@ html
 
       section
         h2.bullet Oscillator.js (2/2)
-        code.language-javascript
-          pre.
+        pre
+          code.language-javascript.
             // continues
               this.start = function(when) {
                 ensureNodeIsLive();
@@ -190,19 +197,19 @@ html
 
       section
         h2.bullet Using it
-        code.language-javascript
-            pre.
-              var ctx = new AudioContext();
-              var osc = new Oscillator(ctx);
+        pre
+          code.language-javascript.
+            var ctx = new AudioContext();
+            var osc = new Oscillator(ctx);
 
-              function restart() {
-                osc.stop(0);
-                osc.start(0);
-              }
-
+            function restart() {
+              osc.stop(0);
               osc.start(0);
+            }
 
-              setTimeout(restart, 1000);
+            osc.start(0);
+
+            setTimeout(restart, 1000);
 
       section
         h2 Self regenerating oscillator
@@ -224,25 +231,27 @@ html
           li triangle
           li custom
 
-        code.language-javascript.bullet
-          pre.
+        pre.bullet
+          code.language-javascript.
             oscillator.type = 'square';
 
 
       section
         h3.bullet <tt>oscillator.frequency</tt>
         h2.bullet Naive attempt:
-        code.language-javascript.bullet
-          pre.
-             oscillator.frequency = '880';
+        pre.bullet
+          code.language-javascript.
+            oscillator.frequency = 880;
+        h1.bullet It doesn't work!
+
 
       section
         h3.bullet <tt>oscillator.frequency</tt> is an <tt>AudioParam</tt>
         h2.bullet It is <em>special</em>
-        code.language-javascript.bullet
-          pre.
+        pre.bullet
+          code.language-javascript.
             // Access it with
-            oscillator.frequency.value = '880';
+            oscillator.frequency.value = 880;
 
 
       section
@@ -276,8 +285,8 @@ html
 
       section
         h3.bullet Go from 440 to 880 Hz in 3 seconds
-        code.language-javascript.bullet
-          pre.
+        pre.bullet
+          code.language-javascript.
             osc.frequency.setValueAtTime(
               440,
               audioContext.currentTime
@@ -294,7 +303,7 @@ html
 
 
       section
-        h1.bullet ADSRs...?
+        h1.bullet ADSwhat...?
         ul
           li Used a lot in substractive synthesis
           li Often for describing note volumes
@@ -305,9 +314,8 @@ html
         h2.bullet We need a new node for controlling the volume
         h1.bullet <tt>GainNode</tt>
 
-
-        code.language-javascript.bullet
-          pre.
+        pre.bullet
+          code.language-javascript.
             var ctx = new AudioContext();
             var osc = ctx.createOscillator();
             var gain = ctx.createGain(); // *** NEW
@@ -320,9 +328,8 @@ html
         h2 ADSR part 1
         h3.bullet Attack/Decay/Sustain phase
 
-        code.language-javascript.bullet
-          pre.
-            //
+        pre.bullet
+          code.language-javascript.
             gain.gain.setValueAtTime(
               0,
               audioContext.currentTime
@@ -335,14 +342,14 @@ html
               sustainValue,
               audioContext.currentTime + decayLength
             );
+            
 
       section
         h2 ADSR part 2
         h3.bullet Release phase
 
-        code.language-javascript.bullet
-          pre.
-            //
+        pre.bullet
+          code.language-javascript.
             gain.gain.linearRampToValueAtTime(
               0,
               audioContext.currentTime + releaseLength
@@ -357,9 +364,8 @@ html
       section
         h2 Cancelling events!
 
-        code.language-javascript.bullet
-          pre.
-            //
+        pre.bullet
+          code.language-javascript.
             osc.frequency.cancelScheduledEvents(
               audioContext.currentTime
             );
@@ -389,9 +395,8 @@ html
       section
         h2.bullet Watch out!
 
-        code.language-javascript.bullet
-          pre.
-            //
+        pre.bullet
+          code.language-javascript.
             var context = new AudioContext();
             var osc = context.createOscillator();
             var lfOsc = context.createOscillator();
@@ -409,9 +414,8 @@ html
       section
         h2.bullet KEEP watching out
 
-        code.language-javascript.bullet
-          pre.
-            //
+        pre.bullet
+          code.language-javascript.
             osc.frequency.value = 440;
 
             // oscillation frequency is 1Hz = once per second
@@ -434,24 +438,25 @@ html
 
       section
         h3.bullet <tt>AudioBufferSourceNode</tt>, 1
-        code.language-javascript.bullet
-          pre.
-            //
+        pre.bullet
+          code.language-javascript.
             var context = new AudioContext();
             var pewSource = context.createBufferSource();
             var request = new XMLHttpRequest();
             request.open('GET', samplePath, true);
             request.responseType = 'arraybuffer'; // we want binary data 'as is'
             request.onload = function() {
-              context.decodeAudioData(request.response, loadedCallback, errorCallback);
+              context.decodeAudioData(
+                request.response,
+                loadedCallback, errorCallback
+              );
             };
 
 
       section
         h3.bullet <tt>AudioBufferSourceNode</tt>, 2
-        code.language-javascript.bullet
-          pre.
-            //
+        pre.bullet
+          code.language-javascript.
             function loadedCallback(bufferSource) {
               buffer = bufferSource;
             }
@@ -466,9 +471,8 @@ html
       section
         h3.bullet <tt>AudioBufferSourceNode</tt>, 3
         p.bullet Just like oscillators!
-        code.language-javascript.bullet
-          pre.
-            //
+        pre.bullet
+          code.language-javascript.
             abs.start(when);
             abs.stop(when);
 
@@ -485,14 +489,14 @@ html
 
       section
         h3.bullet <tt>MediaElementAudioSourceNode</tt>
-        p.bullet Take the output of &lt;audio&gt; or &lt;video&gt; and incorporate them into the graph
-        code.language-javascript.bullet
-          pre.
-            //
+        p.bullet Takes the output of <tt>&lt;audio&gt;</tt> or <tt>&lt;video&gt;</tt> and incorporates them into the graph.
+        pre.bullet
+          code.language-javascript.
             var video = document.querySelector('video');
-            var audioSourceNode = context.createMediaElementAudioSource(
-              video
-            );
+            var audioSourceNode = 
+              context.createMediaElementAudioSource(
+                video
+              );
             audioSourceNode.connect(context.destination);
 
 
@@ -508,9 +512,8 @@ html
 
       section
         h2 <tt>AnalyserNode</tt>, 1
-        code.language-javascript.bullet
-          pre.
-            //
+        pre.bullet
+          code.language-javascript.
             var analyser = context.createAnalyser();
             analyser.fftSize = 2048;
             var analyserData = new Float32Array(
@@ -522,9 +525,8 @@ html
 
       section
         h2 <tt>AnalyserNode</tt>, 2
-        code.language-javascript.bullet
-          pre.
-            //
+        pre.bullet
+          code.language-javascript.
             requestAnimationFrame(animate);
 
             function animate() {
@@ -540,6 +542,8 @@ html
 
       section
         h1.bullet Further altering sounds
+
+      section
         h2.bullet Standard Web Audio nodes you can use
         ul
           li delay
@@ -562,7 +566,7 @@ html
           li in games, play less sounds simultaneously
           li if using PannerNode, use a panning model that is less computationally expensive
           li shorten release times so nodes end playing a bit before
-          li use smaller audio assets (e.g. 2KHz instead of 44KHz)
+          li use smaller audio assets (e.g. 22KHz instead of 44KHz)
           li detect when your app goes to the background and stop processing
 
       section
