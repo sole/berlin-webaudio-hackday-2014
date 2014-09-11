@@ -11,15 +11,28 @@ window.addEventListener('load', function() {
   oscillator.output.connect(analyser);
   analyser.connect(context.destination);
   
-  var button = document.querySelector('button');
+  var btnWave = document.getElementById('btnWave');
+  var btnPlay = document.getElementById('btnPlay');
   var playing = false;
   var waveTypes = ['sine', 'square', 'triangle', 'sawtooth'];
   var waveIndex = 0;
 
-  button.addEventListener('click', nextWave);
+  btnPlay.addEventListener('click', togglePlay);
+
+  btnWave.addEventListener('click', nextWave);
   requestAnimationFrame(animate);
   setWave(0);
-  oscillator.start();
+
+  function togglePlay() {
+    if(playing) {
+      btnPlay.innerHTML = 'play';
+      oscillator.stop();
+    } else {
+      btnPlay.innerHTML = 'stop';
+      oscillator.start();
+    }
+    playing = !playing;
+  }
 
   function nextWave() {
     setWave((++waveIndex) % waveTypes.length);
@@ -28,7 +41,7 @@ window.addEventListener('load', function() {
   function setWave(index) {
     var waveType = waveTypes[index];
     oscillator.type = waveType;
-    button.innerHTML = waveType;
+    btnWave.innerHTML = waveType;
   }
 
   function animate() {
