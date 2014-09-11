@@ -486,7 +486,7 @@ html
 
       section
         h3.bullet <tt>AudioBufferSourceNode</tt>, 1
-        pre.bullet
+        pre
           code.language-javascript.
             var context = new AudioContext();
             var pewSource = context.createBufferSource();
@@ -500,10 +500,9 @@ html
               );
             };
 
-
       section
         h3.bullet <tt>AudioBufferSourceNode</tt>, 2
-        pre.bullet
+        pre
           code.language-javascript.
             function loadedCallback(bufferSource) {
               buffer = bufferSource;
@@ -524,7 +523,7 @@ html
             abs.start(when);
             abs.stop(when);
 
-        p.bullet Even the <tt>AudioBufferSourceNode</tt> dies like oscillators!
+        p.bullet <tt>AudioBufferSourceNode</tt> even die like oscillators!
 
       section
         h2 Pssst:
