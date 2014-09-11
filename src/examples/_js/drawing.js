@@ -6,7 +6,7 @@ function drawTimeDomainSample(canvas, bufferData) {
   var canvasContext = canvas.getContext('2d');
   canvasContext.fillStyle = 'rgb(0, 0, 0)';
   canvasContext.fillRect(0, 0, width, height);
-  canvasContext.lineWidth = 1;
+  canvasContext.lineWidth = 3;
   canvasContext.strokeStyle = 'rgb(255, 0, 0)';
   canvasContext.beginPath();
   var sliceWidth = width * 1.0 / bufferLength;

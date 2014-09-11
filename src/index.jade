@@ -104,6 +104,20 @@ html
             var audioContext = new AudioContext();
 
       section
+        h1.bullet <tt>AudioContext</tt>
+        h2.bullet "Where everything happens"
+
+
+      section
+        h1.bullet <tt>AudioContext</tt>
+        ul
+          li methods to create audio nodes
+          li some nodes generate audio
+          li others alter it
+          li others examine it
+          li they all form the <strong>audio graph</strong>
+
+      section
         h2.bullet The audio graph? <span class="bullet">ô_Ô</span>
 
 
@@ -214,10 +228,48 @@ html
         h2 Self regenerating oscillator
         iframe(src='examples/regenerate_oscillator')
 
+      section
+        h3.bullet But before I continue...
+        h2.bullet It would be nice to <em>see</em> what is going on!
 
       section
-        h2 Can we play something other than that beep?
-        h3 Yes!
+        h2.bullet Let's use an
+        h1.bullet <tt>AnalyserNode</tt>
+
+      section
+        h2 <tt>AnalyserNode</tt>, 1
+        pre.bullet
+          code.language-javascript.
+            var analyser = context.createAnalyser();
+            analyser.fftSize = 2048;
+            var analyserData = new Float32Array(
+              analyser.frequencyBinCount
+            );
+
+            oscillator.connect(analyser);
+
+
+      section
+        h2 <tt>AnalyserNode</tt>, 2
+        pre.bullet
+          code.language-javascript.
+            requestAnimationFrame(animate);
+
+            function animate() {
+              analyser.getFloatTimeDomainData(analyserData);
+              drawSample(canvas, analyserData);
+            }
+
+
+      section
+        h1 Analyser
+        iframe(src='examples/regenerate_oscillator_analysed')
+
+
+      section
+        h1.bullet Now,
+        h2.bullet Can we play something other than that beep?
+        h3.bullet Yes!
 
 
       section
@@ -301,7 +353,7 @@ html
 
 
       section
-        h1.bullet ADSwhat...?
+        h1.bullet <em>ADSwhat...?</em>
         ul
           li Used a lot in substractive synthesis
           li Often for describing note volumes
@@ -504,39 +556,7 @@ html
         p <em>Better open the iframe in a new tab...</em>
 
 
-      section
-        h2.bullet What about analysing sounds?
-        h1.bullet <tt>AnalyserNode</tt>
-
-      section
-        h2 <tt>AnalyserNode</tt>, 1
-        pre.bullet
-          code.language-javascript.
-            var analyser = context.createAnalyser();
-            analyser.fftSize = 2048;
-            var analyserData = new Float32Array(
-              analyser.frequencyBinCount
-            );
-
-            gain.connect(analyser);
-
-
-      section
-        h2 <tt>AnalyserNode</tt>, 2
-        pre.bullet
-          code.language-javascript.
-            requestAnimationFrame(animate);
-
-            function animate() {
-              analyser.getFloatTimeDomainData(analyserData);
-              drawSample(canvas, analyserData);
-            }
-
-
-      section
-        h1 Analyser
-        iframe(src='examples/analyser')
-
+      
 
       section
         h1.bullet Further altering sounds
