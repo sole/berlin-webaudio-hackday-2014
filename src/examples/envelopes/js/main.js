@@ -2,7 +2,15 @@ window.addEventListener('load', function() {
 
   var context = new AudioContext();
   var voice = new Voice(context);
-  voice.output.connect(context.destination);
+
+  var canvas = document.querySelector('canvas');
+  var analyser = context.createAnalyser();
+  analyser.fftSize = 1024;
+  var analyserTimeData = new Float32Array(analyser.frequencyBinCount);
+
+
+  voice.output.connect(analyser);
+  analyser.connect(context.destination);
 
   var playing = false;
 
@@ -10,6 +18,17 @@ window.addEventListener('load', function() {
 
   window.addEventListener('keydown', onKeyDown);
   window.addEventListener('keyup', onKeyUp);
+
+  requestAnimationFrame(animate);
+
+
+  function animate() {
+    requestAnimationFrame(animate);
+
+    analyser.getFloatTimeDomainData(analyserTimeData);
+    drawTimeDomainSample(canvas, analyserTimeData);
+  }
+  
 
   function onKeyDown(ev) {
 

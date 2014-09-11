@@ -306,7 +306,6 @@ html
             // Access it with
             oscillator.frequency.value = 880;
 
-
       section
         h2.bullet So what is the point of <tt>AudioParam</tt>?
         h1.bullet Superpowers.
@@ -363,7 +362,7 @@ html
 
 
       section
-        h2.bullet We need a new node for controlling the volume
+        h3.bullet We need a new node for controlling the volume
         h1.bullet <tt>GainNode</tt>
 
         pre.bullet
@@ -375,13 +374,11 @@ html
             osc.connect(gain); // *** NEW
             gain.connect(ctx.destination); // *** NEW
 
-
       section
         h2 ADSR part 1
-        h3.bullet Attack/Decay/Sustain phase
-
         pre.bullet
           code.language-javascript.
+            // Attack/Decay/Sustain phase
             gain.gain.setValueAtTime(
               0,
               audioContext.currentTime
@@ -398,10 +395,9 @@ html
 
       section
         h2 ADSR part 2
-        h3.bullet Release phase
-
         pre.bullet
           code.language-javascript.
+            // Release phase
             gain.gain.linearRampToValueAtTime(
               0,
               audioContext.currentTime + releaseLength

@@ -5,15 +5,26 @@
     <title>envelopes</title>
     <link rel="stylesheet" href="../_css/style.css">
     <script src="../_js/AudioContext-MonkeyPatch.js" defer></script>
+    <script src="../_js/drawing.js" defer></script>
     <script src="js/Voice.js" defer></script>
     <script src="js/main.js" defer></script>
   </head>
   <body>
 
-    <p><label>attack <input type="range" id="attack" min="0" max="10" /></label></p>
-    <p><label>decay <input type="range" id="decay" min="0" max="10" /></label></p>
-    <p><label>sustainy <input type="range" id="sustain" min="0" max="1" /></label></p>
-    <p><label>release <input type="range" id="release" min="0" max="10" /></label></p>
+    <div>
+      <p><label>attack <input type="range" id="attack" min="0" max="10" /></label></p>
+      <p><label>decay <input type="range" id="decay" min="0" max="10" /></label></p>
+      <p><label>sustainy <input type="range" id="sustain" min="0" max="1" /></label></p>
+      <p><label>release <input type="range" id="release" min="0" max="10" /></label></p>
+    </div>
+    <div>
+      <canvas width="200" height="200"></canvas>
+    </div>
 
+    <style>
+      body {
+        display: flex;
+      }
+    </style>
   </body>
 </html>
