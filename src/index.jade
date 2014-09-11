@@ -248,7 +248,6 @@ html
 
             oscillator.connect(analyser);
 
-
       section
         h2 <tt>AnalyserNode</tt>, 2
         pre.bullet
@@ -259,7 +258,6 @@ html
               analyser.getFloatTimeDomainData(analyserData);
               drawSample(canvas, analyserData);
             }
-
 
       section
         h1 Analyser
@@ -285,6 +283,10 @@ html
         pre.bullet
           code.language-javascript.
             oscillator.type = 'square';
+
+      section
+        h1 Wave types
+        iframe(src='examples/oscillator_wave_type')
 
 
       section
