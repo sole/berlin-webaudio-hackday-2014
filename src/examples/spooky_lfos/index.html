@@ -5,13 +5,23 @@
     <title>spooky LFOs</title>
     <link rel="stylesheet" href="../_css/style.css">
     <script src="../_js/AudioContext-MonkeyPatch.js" defer></script>
+    <script src="../_js/drawing.js" defer></script>
     <script src="js/main.js" defer></script>
   </head>
   <body>
+    <div>
+      <p><button>Make it SPOOKY</button></p>
+      <p><label>LFO rate <input type="range" id="rate" min="0.01" max="50" step="0.01" /></label></p>
+      <p><label>LFO depth <input type="range" id="depth" min="0.01" max="1" step="0.01" /></label></p>
+    </div>
+    <div>
+      <canvas width="200" height="200"></canvas>
+    </div>
 
-    <p><button>Make it SPOOKY</button></p>
-    <p><label>LFO rate <input type="range" id="rate" min="0.01" max="50" step="0.01" /></label></p>
-    <p><label>LFO depth <input type="range" id="depth" min="0.01" max="1" step="0.01" /></label></p>
-
+    <style>
+      body {
+        display: flex;
+      }
+    </style>
   </body>
 </html>

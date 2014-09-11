@@ -10,8 +10,12 @@ window.addEventListener('load', function() {
   var lfOsc = context.createOscillator();
   var gain = context.createGain();
 
-  // Connect the oscillator to the context destination as usual
-  osc.connect(context.destination);
+  // Analyser
+  var analyser = context.createAnalyser();
+
+  // Connect the oscillator to the analyser so we can see what's up
+  osc.connect(analyser);
+  analyser.connect(context.destination);
 
   // Multiply the output of lfoOsc to make it go from [-1, 1] to [-gain, gain]
   // by connecting it to the gain node:
@@ -21,8 +25,12 @@ window.addEventListener('load', function() {
   gain.connect(osc.frequency);
   gain.gain.value = 0;
 
-  osc.frequency.value = 880;
+  osc.frequency.value = 440;
   lfOsc.frequency.value = 1;
+
+  var canvas = document.querySelector('canvas');
+    analyser.fftSize = 1024;
+  var analyserTimeData = new Float32Array(analyser.frequencyBinCount);
 
   var playing = false;
   var playingMessage = 'No more SPOOKY';
@@ -40,6 +48,7 @@ window.addEventListener('load', function() {
   depthSlider.addEventListener('input', onDepthChange);
   depthSlider.value = gain.gain.value;
 
+  requestAnimationFrame(animate);
 
   function toggle() {
     if(playing) {
@@ -65,6 +74,13 @@ window.addEventListener('load', function() {
     // we don't want to send the oscillator to play on negative frequencies
     // so we'll just modulate using the current osc frequency as multiplier and not a hardcoded value
     gain.gain.value = value * osc.frequency.value;
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+
+    analyser.getFloatTimeDomainData(analyserTimeData);
+    drawTimeDomainSample(canvas, analyserTimeData);
   }
 
 });
