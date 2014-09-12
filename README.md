@@ -7,7 +7,7 @@ Not yet! (if ever).
 
 ## View slides online
 
-Here: [http://soledadpenades.com/files/t/20140912_webaudio/](http://soledadpenades.com/files/t/20140912_webaudio/)
+Here: [http://soledadpenades.com/files/t/berlin-webaudio-hackday-2014/](http://soledadpenades.com/files/t/berlin-webaudio-hackday-2014/)
 
 ## View slides locally
 

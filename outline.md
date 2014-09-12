@@ -475,8 +475,6 @@ And of course the parameters for these nodes can be modulated using the output f
 ## Gotchas
 
 - Older implementations use prefixed constructor, older node names and constants we don't use anymore. But we have Chris Wilson's monkey patch library (TODO) and this article on how to write audio code that works in every browser
-- xmentioned For performance reasons (TODO investigate & look for the exact details) some Nodes are one use only-need to recreate them everytime you call `stop` on them
-- xmentioned setValue at time won't interpolate if you haven't set an initial value for the ramp using another set* function already
 - trying to use buffers before they're actually loaded
 - In Chrome you can't new too many AudioContexts. ScriptNodes can be starved by holding up event loop for too long. https://twitter.com/ntt/status/505357514645311489
 - The mapping from simpler LR pan (like on a mixer) parameter to the PannerNode x,y,z is kinda messy. http://stackoverflow.com/questions/14378305/how-to-create-very-basic-left-right-equal-power-panning-with-createpanner/14412601#14412601 https://twitter.com/ntt/status/505358246773665792
@@ -502,23 +500,22 @@ Topics for Web Audio Hackday 202 or just to get you excited in case you weren't 
 
 ## More info
 
-TODO fill in missing links
+Let me know if I'm missing any links!
 
 - Web Audio
-	- API specification
-	- Mailing list
-	- Users mailing list
+	- [API specification](http://webaudio.github.io/web-audio-api/)
+	- [Mailing list](http://lists.w3.org/Archives/Public/public-audio/)
+	- [Developers mailing list](http://lists.w3.org/Archives/Public/public-audio-dev/)
 - The [Web Audio API book](http://chimera.labs.oreilly.com/books/1234000001552/index.html) by Boris Smus
 - Talks:
 	- Chris Wilson: [Turning the web up to 11](https://www.youtube.com/watch?v=hFsCG7v9Y4c) @ Google I/O 2012 - [deck](http://webaudio-io2012.appspot.com/) - many method names have changed since then, a lot happens in two years!
 	- Chris Wilson: [Making the web rock](https://www.youtube.com/watch?v=wZrNI-86zYI) @ HTMLDevConf 2013 - [deck](http://webaudiodemos.appspot.com/slides/)
 	- Stuart Memo: [Javascript is the new punk rock]() @ JSConf.EU 2012 - [deck]()
-	- Paul Adenot: @ BCN Hackday 2014 - [deck]()
 	- Paul Adenot: [Web Audio API at FOSDEM 2014](http://ftp.osuosl.org/pub/fosdem//2014/UD2218A/Saturday/Web_Audio_API.webm)
-	- Jordan Santell: @ JSConf.us 2014 - [deck]()
-	- Soledad Penades: [Audio for the masses]() @ LXJS 2014 - [deck]()
-	- Soledad Penades: [Web Audio + Web Components = Audio tags]() @ Cascadia JS 2013 - [deck]()
-	- Soledad Penades: [Four to the floor JavaScript]() @ JSConf.EU 2013 - [deck]()
+	- Jordan Santell: [Signal Processing with the Web Audio API](http://www.youtube.com/watch?v=YBQ5pzvgbOE) @ JSConf.us 2014 - [deck code](https://github.com/jsantell/dsp-with-web-audio-presentation) [online deck](http://jsantell.github.io/dsp-with-web-audio-presentation/)
+	- Soledad Penades: [Audio for the masses](http://www.youtube.com/watch?v=Bqj9LDszlDY) @ LXJS 2014 - [deck](http://soledadpenades.com/files/t/lxjs2014/) [write up](http://soledadpenades.com/2014/08/15/audio-for-the-masses/)
+	- Soledad Penades: [Web Audio + Web Components = Audio tags](http://www.youtube.com/watch?v=SCBbd5N4fho) @ Cascadia JS 2013 - [deck](http://soledadpenades.com/files/t/cascadiajs-audio-tags/) [writeup](http://soledadpenades.com/2013/11/24/audio-tags-web-components-web-audio-love-the-video/)
+	- Soledad Penades: [Four to the floor JavaScript](http://soledadpenades.com/2013/10/23/four-to-the-floor-javascript-the-video/) @ JSConf.EU 2013 - [deck](https://github.com/sole/4x4JS/)
 - Articles and newsletters
 	- Chris Wilson: [A tale of two clocks - Scheduling Web Audio with precision](http://www.html5rocks.com/en/tutorials/audio/scheduling/) - how to accurately schedule events in Web Audio
 	- Chris Lowis' [Web Audio Weekly](http://blog.chrislowis.co.uk/waw.html) newsletter
