@@ -427,7 +427,6 @@ html
 
       section
         h1 LFOs
-        h2.bullet <em>Low Frequency Oscillators</em>
         img(src='./examples/_data/lfo.png', class='bullet')
 
 
@@ -581,8 +580,9 @@ html
           li in games, play less sounds simultaneously
           li if using PannerNode, use a panning model that is less computationally expensive
           li shorten release times so nodes end playing a bit before
-          li use smaller audio assets (e.g. 22KHz instead of 44KHz)
+          li <del>use smaller audio assets (e.g. 22KHz instead of 44KHz)</del>
           li detect when your app goes to the background and stop processing
+          li maybe don't use convolver nodes-they are expensive!
 
       section
         h1.bullet Web Audio Workshop 202?
