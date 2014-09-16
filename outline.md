@@ -510,7 +510,7 @@ Let me know if I'm missing any links!
 - Talks:
 	- Chris Wilson: [Turning the web up to 11](https://www.youtube.com/watch?v=hFsCG7v9Y4c) @ Google I/O 2012 - [deck](http://webaudio-io2012.appspot.com/) - many method names have changed since then, a lot happens in two years!
 	- Chris Wilson: [Making the web rock](https://www.youtube.com/watch?v=wZrNI-86zYI) @ HTMLDevConf 2013 - [deck](http://webaudiodemos.appspot.com/slides/)
-	- Stuart Memo: [Javascript is the new punk rock]() @ JSConf.EU 2012 - [deck]()
+	- Stuart Memo: [Javascript is the new punk rock](http://www.youtube.com/watch?v=PN8Eg1K9xjE) @ JSConf.EU 2012
 	- Paul Adenot: [Web Audio API at FOSDEM 2014](http://ftp.osuosl.org/pub/fosdem//2014/UD2218A/Saturday/Web_Audio_API.webm)
 	- Jordan Santell: [Signal Processing with the Web Audio API](http://www.youtube.com/watch?v=YBQ5pzvgbOE) @ JSConf.us 2014 - [deck code](https://github.com/jsantell/dsp-with-web-audio-presentation) [online deck](http://jsantell.github.io/dsp-with-web-audio-presentation/)
 	- Soledad Penades: [Audio for the masses](http://www.youtube.com/watch?v=Bqj9LDszlDY) @ LXJS 2014 - [deck](http://soledadpenades.com/files/t/lxjs2014/) [write up](http://soledadpenades.com/2014/08/15/audio-for-the-masses/)
